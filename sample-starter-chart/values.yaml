@@ -67,6 +67,24 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
+# Probe settings (use Kubernetes syntax)
+# Optional
+probes:
+  livenessProbe:
+    initialDelaySeconds: 30
+    httpGet:
+      path: /swagger-ui/index.html
+      port: 8080
+  readinessProbe:
+    timeoutSeconds: 10
+    httpGet:
+      path: /swagger-ui/index.html
+      port: 8080
+      
+env:
+  - name: SPRING_DATASOURCE_URL
+    value: jdbc:postgresql://<CHARTNAME>-postgresql:5432/flexicore
+
 
 autoscaling:
   enabled: false
@@ -80,3 +98,9 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+postgresql:
+  auth:
+    username: "flexicore"
+    password: "flexicore"
+    database: "flexicore"
