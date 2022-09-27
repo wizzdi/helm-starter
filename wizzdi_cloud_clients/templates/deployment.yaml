@@ -40,13 +40,16 @@ spec:
               protocol: TCP
 {{- end }}
 {{- if .Values.probes }}
+          probes:
 {{ toYaml .Values.probes | indent 10 }}
 {{- end }}
 {{- if .Values.env }}
+          env:
 {{ toYaml .Values.env | indent 10 }}
 {{- end }}
+{{- if .Values.resources }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+{{ toYaml .Values.resources | indent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
