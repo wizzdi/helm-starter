@@ -84,6 +84,6 @@ spec:
       resources:
         requests:
           storage: {{ .size }}
-      storageClassName: rbd
+      storageClassName: hcloud-volumes
 {{- end }}
 {{- end }}
