@@ -11,6 +11,9 @@ spec:
   selector:
     matchLabels:
       {{- include "<CHARTNAME>.selectorLabels" . | nindent 6 }}
+{{ if .Values.volumes }}
+  serviceName: {{ include "<CHARTNAME>.fullname" . }}-service
+{{ end }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -39,20 +42,6 @@ spec:
               containerPort: {{ .targetPort }}
               protocol: TCP
 {{- end }}
-{{- if .Values.volumes }}
-          volumeClaimTemplates:
-{{- range .Values.volumes }}
-              - metadata:
-                  name: {{ .name }}
-                spec:
-                  accessModes:
-                    - ReadWriteOnce
-                  resources:
-                    requests:
-                      storage: {{ .size }}
-                  storageClassName: rbd
-{{- end }}
-{{- end }}
 {{- if .Values.probes }}
           probes:
 {{ toYaml .Values.probes | indent 10 }}
@@ -65,6 +54,13 @@ spec:
           resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{- end }}
+          {{- if .Values.volumes }}
+          volumeMounts:
+          {{- range .Values.volumes }}
+          - mountPath: {{ .path }}
+            name: {{ .name }}
+          {{- end }}
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -77,3 +73,17 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  {{- if .Values.volumes }}
+  volumeClaimTemplates:
+{{- range .Values.volumes }}
+  - metadata:
+      name: {{ .name }}
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .size }}
+      storageClassName: rbd
+{{- end }}
+{{- end }}
