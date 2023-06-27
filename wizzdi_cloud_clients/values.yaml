@@ -44,6 +44,10 @@ ports:
   - name: http
     port: 8080
     targetPort: 8080
+volumes:
+  - name: <CHARTNAME>-volume
+    size: 1Gi
+
 
 
 ingress:

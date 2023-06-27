@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: {{ if .Values.volumes }}StatefulSet{{ else }}Deployment{{ end }}
 metadata:
   name: {{ include "<CHARTNAME>.fullname" . }}
   labels:
@@ -38,6 +38,20 @@ spec:
             - name: {{ .name | quote }}
               containerPort: {{ .targetPort }}
               protocol: TCP
+{{- end }}
+{{- if .Values.volumes }}
+          volumeClaimTemplates:
+{{- range .Values.volumes }}
+              - metadata:
+                  name: {{ .name }}
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: {{ .size }}
+                  storageClassName: rbd
+{{- end }}
 {{- end }}
 {{- if .Values.probes }}
           probes:
