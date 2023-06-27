@@ -47,6 +47,7 @@ ports:
 volumes:
   - name: <CHARTNAME>-volume
     size: 1Gi
+    path: /home/flexicore
 
 
 
